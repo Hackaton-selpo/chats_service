@@ -19,7 +19,7 @@ async def get_user_chats(
 
 
 @router.get('/{chat_id}/messages')
-async def get_chats_messages(chat_id:str):
+async def get_chats_messages(chat_id: str):
     return await ChatsService.get_chat_messages(chat_id)
 
 

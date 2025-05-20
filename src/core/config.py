@@ -10,9 +10,4 @@ class DBConfig(BaseSettings):
     database_name: str
 
 
-class AuthConfig(BaseSettings):
-    public_key_path:str
-    algorithm: str
-
-
 db_config = DBConfig()
