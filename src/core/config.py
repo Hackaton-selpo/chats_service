@@ -8,8 +8,11 @@ class DBConfig(BaseSettings):
     database_username: str
     database_password: str
     database_name: str
-    redis_host: str
-    redis_port: int
+
+
+class AuthConfig(BaseSettings):
+    public_key_path:str
+    algorithm: str
 
 
 db_config = DBConfig()
