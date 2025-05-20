@@ -1,29 +1,40 @@
-import uuid
 from typing import Optional
 
 from fastapi import Depends, FastAPI, HTTPException, status, APIRouter
 from fastapi.security import OAuth2PasswordBearer
+
 from src.modules.chats import schemas
 from src.modules.chats.services import ChatsService
 
 from src.modules.chats.depends import get_user_from_token
+from src.modules.chats.schemas import Chat, CreatedMessageSchema
+from src.modules.messages.schemas import Message
 
 router = APIRouter()
 
 
-@router.get('/')
+@router.get(
+    '/',
+    response_model=list[Chat]
+)
 async def get_user_chats(
         user: schemas.User = Depends(get_user_from_token)
 ):
     return await ChatsService.get_user_chats(user.id)
 
 
-@router.get('/{chat_id}/messages')
+@router.get(
+    '/{chat_id}/messages',
+    response_model=list[Message]
+)
 async def get_chats_messages(chat_id: str):
     return await ChatsService.get_chat_messages(chat_id)
 
 
-@router.post('/')
+@router.post(
+    '/',
+    response_model=CreatedMessageSchema
+             )
 async def send_message_to_ai(
         user_prompt: str,
         chat_id: Optional[str] = None,
