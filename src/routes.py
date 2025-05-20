@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+
 from src.modules.chats.routes import router as chats_router
 from src.modules.messages.routes import router as messages_router
 

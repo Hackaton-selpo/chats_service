@@ -1,6 +1,7 @@
+import datetime
 import uuid
 from typing import Optional
-import datetime
+
 from pydantic import BaseModel
 
 from src.shared.enums import MessageRole
