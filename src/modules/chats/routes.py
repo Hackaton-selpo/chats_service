@@ -23,9 +23,9 @@ async def get_chats_messages(chat_id: str):
 
 @router.post("/", response_model=CreatedMessageSchema)
 async def send_message_to_ai(
-        user_prompt: str,
-        chat_id: Optional[str] = None,
-        user: shared_schemas.User = Depends(get_current_user),
+    user_prompt: str,
+    chat_id: Optional[str] = None,
+    user: shared_schemas.User = Depends(get_current_user),
 ):
     if not chat_id:
         # create chat
