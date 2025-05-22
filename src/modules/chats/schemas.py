@@ -4,11 +4,6 @@ import uuid
 from pydantic import BaseModel
 
 
-class User(BaseModel):
-    id: int
-    name: str
-
-
 class Chat(BaseModel):
     id: uuid.UUID
     title: str

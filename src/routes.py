@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
-from src.grpc_token_checker.token_validator import get_current_user
 from src.modules.chats.routes import router as chats_router
 from src.modules.messages.routes import router as messages_router
 
