@@ -12,10 +12,3 @@ main_router.include_router(messages_router, prefix="/messages", tags=["messages"
 @main_router.get("/ping")
 async def ping():
     return {"ping": "pong"}
-
-
-@main_router.get("/")
-async def root(
-        _=Depends(get_current_user)
-):
-    pass

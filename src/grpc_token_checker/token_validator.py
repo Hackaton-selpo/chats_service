@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException, status
 from src.grpc_token_checker import auth_service_pb2
 from src.grpc_token_checker import auth_service_pb2_grpc
 from src.shared.depends import get_access_token_from_headers
+from src.shared import schemas as shares_schemas
 
 
 def get_auth_service_stub():
@@ -21,7 +22,8 @@ def get_current_user(token: str = Depends(get_access_token_from_headers)):
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Invalid token: {response.error}"
             )
-        return dict(response.claims)
+        response.claims['id'] = response.claims['sub']
+        return shares_schemas.User(**response.claims)
     except grpc.RpcError as e:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
