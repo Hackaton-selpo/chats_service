@@ -20,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     lifespan=lifespan,
+    root_path="/chats"
 )
 app.include_router(main_router)
 app.add_middleware(
