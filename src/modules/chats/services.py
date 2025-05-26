@@ -43,7 +43,7 @@ class ChatsService:
                 ) from e
 
     @staticmethod
-    async def create_chat(user_prompt: str, user_id: int):
+    async def create_chat(user_prompt: str, user_id: int) -> str:
         async with async_session() as session, session.begin():
             insert_chat_req = (
                 insert(Chat)
@@ -51,4 +51,4 @@ class ChatsService:
                 .returning(Chat.id)
             )
             chat_id_chunked = await session.execute(insert_chat_req)
-            return chat_id_chunked.scalar()
+            return str(chat_id_chunked.scalar())
