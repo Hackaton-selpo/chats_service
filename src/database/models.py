@@ -15,6 +15,9 @@ class Message(Base):
     body: Mapped[str] = mapped_column()
     is_liked: Mapped[Optional[bool]] = mapped_column()
     role: Mapped[MessageRole] = mapped_column(Enum(MessageRole), nullable=False)
+    is_published: Mapped[bool] = mapped_column(
+        server_default="False", default=False, nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )

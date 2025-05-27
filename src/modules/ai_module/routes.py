@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from fastapi import APIRouter
 from starlette.websockets import WebSocket, WebSocketDisconnect
@@ -83,7 +84,7 @@ async def websocket_endpoint(
                 )
 
             pending_tasks = [asyncio.create_task(t) for t in tasks]
-            await ChatsService.insert_message(
+            user_message_id = await ChatsService.insert_message(
                 chat_id, user_received_json["body"], role=MessageRole.user
             )
             tasks.clear()
@@ -91,9 +92,11 @@ async def websocket_endpoint(
                 result: shared_schemas.AIOutput = await done_task
                 result = result.model_dump()
                 result["chat_id"] = chat_id
-                await ChatsService.insert_message(
+                ai_message_id = await ChatsService.insert_message(
                     chat_id, result["body"], role=MessageRole.ai
                 )
+                result["user_message_id"] = user_message_id
+                result["ai_message_id"] = ai_message_id
                 await websocket.send_json(result)
                 # print(result)
     except WebSocketDisconnect:

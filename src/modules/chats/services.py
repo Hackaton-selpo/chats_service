@@ -5,6 +5,7 @@ from sqlalchemy import insert, select
 from src.database import async_session
 from src.database.models import Chat, Message
 from src.shared.enums import MessageRole
+from src.shared.funcs import get_message_type
 
 
 class ChatsService:
@@ -18,7 +19,7 @@ class ChatsService:
     @staticmethod
     async def get_chat_messages(chat_id: str) -> list[dict]:
         """
-
+        also add message type
         :param chat_id:
         :return: list with dicts with consisting of Messages with a field <type> (audio/image/text)
         """
@@ -32,18 +33,7 @@ class ChatsService:
         messages = chunked_messages.scalars().all()
         result_messages = []
         for message in messages:
-            message = message.__dict__
-            message_type: str
-            if message["body"].endswith("mp3"):
-                message["type"] = "audio"
-            elif (
-                message["body"].endswith("png")
-                or message["body"].endswith("jpg")
-                or message["body"].endswith("jpeg")
-            ):
-                message["type"] = "image"
-            else:
-                message["type"] = "text"
+            message.type = get_message_type(message["body"])
             result_messages.append(message)
         return result_messages
 

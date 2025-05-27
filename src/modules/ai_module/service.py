@@ -1,8 +1,6 @@
 import asyncio
 from typing import Optional
 
-import httpx
-
 from src.shared import schemas as shared_schemas
 
 
@@ -49,7 +47,7 @@ class AIService:
 
         :return: bing url to image
         """
-        await asyncio.sleep(60)
+        await asyncio.sleep(10)
         return shared_schemas.AIOutput(
             type="image",
             body="https://i.pinimg.com/736x/74/bb/05/74bb05512ccb07a2a2076e0415b2991b.jpg",
@@ -64,7 +62,7 @@ class AIService:
 
         :return: url to audio
         """
-        await asyncio.sleep(60)
+        await asyncio.sleep(10)
         return shared_schemas.AIOutput(
             type="audio",
             body="https://zaycev.fractal.zerocdn.com/37a0f8a1ee458ecbdb6ed6bd9df15c1f:2025052620/track/24854430.mp3",
