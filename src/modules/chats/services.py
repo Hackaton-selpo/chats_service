@@ -36,7 +36,11 @@ class ChatsService:
             message_type: str
             if message["body"].endswith("mp3"):
                 message["type"] = "audio"
-            elif message["body"].endswith("png"):
+            elif (
+                message["body"].endswith("png")
+                or message["body"].endswith("jpg")
+                or message["body"].endswith("jpeg")
+            ):
                 message["type"] = "image"
             else:
                 message["type"] = "text"
