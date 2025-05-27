@@ -10,8 +10,3 @@ class Chat(BaseModel):
     user_id: int
     created_at: datetime.datetime
     updated_at: datetime.datetime
-
-
-class CreatedMessageSchema(BaseModel):
-    chat_id: uuid.UUID
-    message_id: int

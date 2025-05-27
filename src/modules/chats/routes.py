@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, Depends
 
 from src.grpc_token_checker.token_validator_depends import get_current_user
@@ -19,14 +17,3 @@ async def get_user_chats(user: shared_schemas.User = Depends(get_current_user)):
 @router.get("/{chat_id}/messages", response_model=list[Message])
 async def get_chats_messages(chat_id: str):
     return await ChatsService.get_chat_messages(chat_id)
-
-
-# @router.post("/", response_model=CreatedMessageSchema)
-async def send_message_to_ai(
-    user_prompt: str,
-    chat_id: Optional[str] = None,
-):
-    return {
-        "chat_id": chat_id,
-        "message_id": await ChatsService.insert_message(chat_id, user_prompt),
-    }

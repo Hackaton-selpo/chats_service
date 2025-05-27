@@ -7,6 +7,7 @@ from src.grpc_token_checker.token_validator_depends import get_current_user
 from src.modules.ai_module.service import AIService
 from src.modules.chats.services import ChatsService
 from src.shared import schemas as shared_schemas
+from src.shared.enums import MessageRole
 
 """
 key = socket
@@ -59,34 +60,40 @@ async def websocket_endpoint(
                 )
             else:
                 chat_id = websocket.headers.get("chat_id")
-            user_prompt = await websocket.receive_json()
+            user_received_json = await websocket.receive_json()
 
             tasks = user_sockets[websocket]["tasks"]
-            if user_prompt.get("text"):
+            if user_received_json.get("text"):
                 tasks.append(
                     AIService().generate_ai_text_answer(
-                        user_prompt["body"], user_prompt.get("letter_id")
+                        user_received_json["body"], user_received_json.get("letter_id")
                     )
                 )
-            if user_prompt.get("image"):
+            if user_received_json.get("image"):
                 tasks.append(
                     AIService().generate_ai_image_answer(
-                        user_prompt["body"], user_prompt.get("letter_id")
+                        user_received_json["body"], user_received_json.get("letter_id")
                     )
                 )
-            if user_prompt.get("audio"):
+            if user_received_json.get("audio"):
                 tasks.append(
                     AIService().generate_ai_audio_answer(
-                        user_prompt["body"], user_prompt.get("letter_id")
+                        user_received_json["body"], user_received_json.get("letter_id")
                     )
                 )
 
             pending_tasks = [asyncio.create_task(t) for t in tasks]
+            await ChatsService.insert_message(
+                chat_id, user_received_json["body"], role=MessageRole.user
+            )
             tasks.clear()
             for done_task in asyncio.as_completed(pending_tasks):
                 result: shared_schemas.AIOutput = await done_task
                 result = result.model_dump()
                 result["chat_id"] = chat_id
+                await ChatsService.insert_message(
+                    chat_id, result["body"], role=MessageRole.ai
+                )
                 await websocket.send_json(result)
                 # print(result)
     except WebSocketDisconnect:

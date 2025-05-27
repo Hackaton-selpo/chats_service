@@ -16,7 +16,12 @@ class ChatsService:
             return chunked_chats.scalars().all()
 
     @staticmethod
-    async def get_chat_messages(chat_id: str):
+    async def get_chat_messages(chat_id: str) -> list[dict]:
+        """
+
+        :param chat_id:
+        :return: list with dicts with consisting of Messages with a field <type> (audio/image/text)
+        """
         async with async_session() as session:
             messages_req = (
                 select(Message)
@@ -24,22 +29,36 @@ class ChatsService:
                 .order_by(Message.created_at.desc())
             )
             chunked_messages = await session.execute(messages_req)
-            return chunked_messages.scalars().all()
+        messages = chunked_messages.scalars().all()
+        result_messages = []
+        for message in messages:
+            message = message.__dict__
+            message_type: str
+            if message["body"].endswith("mp3"):
+                message["type"] = "audio"
+            elif message["body"].endswith("png"):
+                message["type"] = "image"
+            else:
+                message["type"] = "text"
+            result_messages.append(message)
+        return result_messages
 
     @staticmethod
-    async def insert_message(chat_id: int, user_prompt: str) -> int:
+    async def insert_message(
+        chat_id: int, user_prompt: str, role: MessageRole = MessageRole.user
+    ) -> int:
         async with async_session() as session, session.begin():
             try:
                 insert_message_req = (
                     insert(Message)
-                    .values(chat_id=chat_id, body=user_prompt, role=MessageRole.user)
+                    .values(chat_id=chat_id, body=user_prompt, role=role)
                     .returning(Message.id)
                 )
                 inserted_messaged_id_chunked = await session.execute(insert_message_req)
                 return inserted_messaged_id_chunked.scalar()
             except sqlalchemy.exc.DBAPIError as e:
                 raise HTTPException(
-                    status_code=400, detail="Chat creation failed."
+                    status_code=400, detail="Message creating failed"
                 ) from e
 
     @staticmethod
