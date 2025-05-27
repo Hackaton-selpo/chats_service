@@ -5,7 +5,7 @@ import websockets
 
 # Замени на свой токен
 JWT_TOKEN = """
-eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoiZ3Vza2lyMjYwNkBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImV4cCI6MTc0ODI2ODk0NywiaWF0IjoxNzQ4MjY4NjQ3LCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.Fipp6Me8ydQ79TtcHZQ7Ls83yBdBCJ8bL8u2cfB17ISGmXHD-7QLBtrD95A08J3PneN4Jp8RGKmnIkr1v2pmE-RQl7_xYIuO7Av57bBlEQiaec1qoAgZa3lKwjw7Qiz57jhHoItuaRyCNBLbwjoQRbiVM1ocorAyoBMxWvWmVnxDdBKI2wTgCUdWX6DEaN_lPv6ATY6DauXlrHIOTs5mcqmn_883s-Dzav6sm_hkZ3y2BQsVPZacUQHOa13G8iJTcVaZY43XWNqRMVKySgmnsL-Z_lOhfLxLsoKQE_T2fpTQk_3w_c299WlP21_ZQ9npihkzeWfS1CwKGjLcw7wg4Q
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMSIsImVtYWlsIjoiZ3Vza2lyMjYwNkBnbWFpbC5jb20iLCJyb2xlIjoidXNlciIsImV4cCI6MTc0ODMzODI3MywiaWF0IjoxNzQ4MzM3OTczLCJ0b2tlbl90eXBlIjoiYWNjZXNzX3Rva2VuIn0.kXsNwDCiezF8jw1Gc-qYzhMsBHA4zzt2Y-nu7z5FX7aO1F9J3431pXQOLuWdbejImOS-jcxv03d-B2n7FOr6QQlrnBxo78n_I5jABXbRmBDeqEBRhErIhK96BIXD_DGI4SqrGf-3Kgm5SF0t2Gk8BpjpATBTyFj-BKQ58PnpzQavlKJTk1_fjAi6mHw5dB9-yWLTESodEPRGRQDVSMVfSL474L5nE1FJ02TBPcii1xs_58hUUCFZud_wPmhYXrAwQmx15TjUa1djV6EjfE0lXgXD5SopN4Q2-Rl48RQccHHXGAV5RrpOr4qkM2684ynWn1nUsqfdJE4uqaMG91O0ZQ
 """.strip()
 
 
@@ -21,10 +21,10 @@ async def connect_websocket():
         print("Подключено")
 
         # Первое сообщение — без chat_id
-        first_message = {"text": "Создай историю о любви"}
+        first_message = {"body": "Создай историю о любви", "text": True}
         await websocket.send(json.dumps(first_message))
         print("Отправлено:", first_message)
-
+        chat_id = ""
         while True:
             response = await websocket.recv()
 
@@ -32,8 +32,8 @@ async def connect_websocket():
             print("Получено:", data)
 
             # Если пришёл chat_id — можно отправить следующее сообщение
-            if "chat_id" in data:
-                pass
+            if data.get("chat_id"):
+                chat_id = data["chat_id"]
                 # second_message = {
                 #     "chat_id": data["chat_id"],
                 #     "text": "Расскажи мне о квантовых вычислениях"
