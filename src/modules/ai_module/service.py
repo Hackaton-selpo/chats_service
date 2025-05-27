@@ -16,7 +16,7 @@ class AIService:
     async def generate_ai_text_answer(
         self,
         user_prompt: str,
-        letter_id: Optional[int],
+        letter_id: Optional[str],
     ) -> shared_schemas.AIOutput:
         """
         :param user_prompt: user text
@@ -41,7 +41,7 @@ class AIService:
     async def generate_ai_image_answer(
         self,
         user_prompt: str,
-        letter_id: Optional[int],
+        letter_id: Optional[str],
     ) -> shared_schemas.AIOutput:
         """
 
@@ -56,7 +56,7 @@ class AIService:
     async def generate_ai_audio_answer(
         self,
         user_prompt: str,
-        letter_id: Optional[int],
+        letter_id: Optional[str],
     ) -> shared_schemas.AIOutput:
         """
 

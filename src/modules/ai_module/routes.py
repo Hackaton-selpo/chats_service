@@ -36,7 +36,7 @@ async def websocket_endpoint(
     audio: Optional[bool] (generate audio?)
     image: Optional[bool] (generate image?)
     audio: Optional[bool] (generate audio?)
-    letter_id : Optional[int] (letter reference id in db)
+    letter_id : Optional[str] (letter reference id from getter service)
     }
 
     out: {
