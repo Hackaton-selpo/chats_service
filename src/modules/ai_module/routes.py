@@ -88,7 +88,8 @@ async def websocket_endpoint(
 
             pending_tasks = [asyncio.create_task(t) for t in tasks]
             user_message_id = await ChatsService.insert_message(
-                chat_id, user_received_json["body"], role=MessageRole.user
+                chat_id, user_received_json["body"], role=MessageRole.user,
+                letter_id= user_received_json.get("letter_id"),
             )
             tasks.clear()
             for done_task in asyncio.as_completed(pending_tasks):
@@ -98,7 +99,8 @@ async def websocket_endpoint(
                 # add additional info from db
                 result["chat_id"] = chat_id
                 ai_message_id = await ChatsService.insert_message(
-                    chat_id, result["body"], role=MessageRole.ai
+                    chat_id, result["body"], role=MessageRole.ai,
+                    letter_id=user_received_json.get("letter_id"),
                 )
                 result["user_message_id"] = user_message_id
                 result["ai_message_id"] = ai_message_id

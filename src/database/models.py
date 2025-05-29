@@ -31,6 +31,7 @@ class Message(Base):
     chat: Mapped["Chat"] = relationship(back_populates="messages")
     message_type: Mapped["MessageType"] = relationship(back_populates="messages")
     chat_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("chats.id"))
+    letter_id: Mapped[str] = mapped_column(nullable=True)
 
 
 class Chat(Base):

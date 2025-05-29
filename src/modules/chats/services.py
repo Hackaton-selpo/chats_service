@@ -1,3 +1,5 @@
+from typing import Optional
+
 import sqlalchemy
 from fastapi import HTTPException
 from sqlalchemy import insert, select
@@ -39,13 +41,16 @@ class ChatsService:
 
     @staticmethod
     async def insert_message(
-        chat_id: int, user_prompt: str, role: MessageRole = MessageRole.user
+            chat_id: int,
+            user_prompt: str,
+            role: MessageRole = MessageRole.user,
+            letter_id: Optional[str] = None,
     ) -> int:
         async with async_session() as session, session.begin():
             try:
                 insert_message_req = (
                     insert(Message)
-                    .values(chat_id=chat_id, body=user_prompt, role=role)
+                    .values(chat_id=chat_id, body=user_prompt, role=role, letter_id=letter_id)
                     .returning(Message.id)
                 )
                 inserted_messaged_id_chunked = await session.execute(insert_message_req)
