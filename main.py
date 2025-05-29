@@ -18,7 +18,13 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(lifespan=lifespan, root_path="/chats")
+app = FastAPI(
+    lifespan=lifespan, root_path="/chats",
+
+    swagger_ui_parameters={
+        "displayRequestDuration": True,  # Показать длительность запросов
+    },
+)
 app.include_router(main_router)
 app.add_middleware(
     CORSMiddleware,
