@@ -13,6 +13,9 @@ class MessageType(Base):
     __tablename__ = "messages_types"
 
     name: Mapped[str] = mapped_column()
+     messages: Mapped[list["Message"]] = relationship(
+        back_populates="Message", order_by="Message.created_at"
+    )
 
 
 class Message(Base):
@@ -29,7 +32,7 @@ class Message(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     chat: Mapped["Chat"] = relationship(back_populates="messages")
-    message_type: Mapped["MessageType"] = relationship(back_populates="messages")
+    message_type: Mapped["MessageType"] = relationship(back_populates="messages_types")
     chat_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("chats.id"))
     letter_id: Mapped[str] = mapped_column(nullable=True)
 
