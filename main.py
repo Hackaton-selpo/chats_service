@@ -22,7 +22,7 @@ app = FastAPI(lifespan=lifespan, root_path="/chats")
 app.include_router(main_router)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost", "http://localhost:80"],
+    allow_origins=["http://localhost:5173", "http://localhost", "http://localhost:80", "http://localhost:3000"],
     allow_credentials=True,
     allow_methods=["*"],
 )
