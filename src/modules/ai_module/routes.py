@@ -74,7 +74,7 @@ async def websocket_endpoint(
     # user: shared_schemas.User = get_current_user(token)
     payload_dict = eval(decode_token(token).replace('null', 'None'))
     payload_dict['id'] = payload_dict['sub']
-    print(payload_dict)
+
     user = shared_schemas.User(**payload_dict)
     user_sockets[websocket] = {"tasks": []}
     try:
@@ -116,6 +116,7 @@ async def websocket_endpoint(
             user_message_id = await ChatsService.insert_message(
                 chat_id, user_received_json["body"], role=MessageRole.user,
                 letter_id=user_received_json.get("letter_id"),
+                message_type='text'
             )
             tasks.clear()
             for done_task in asyncio.as_completed(pending_tasks):
@@ -125,8 +126,11 @@ async def websocket_endpoint(
                 # add additional info from db
                 result["chat_id"] = chat_id
                 ai_message_id = await ChatsService.insert_message(
-                    chat_id, result["body"], role=MessageRole.ai,
+                    chat_id,
+                    result["body"],
+                    role=MessageRole.ai,
                     letter_id=user_received_json.get("letter_id"),
+                    message_type=result['type']
                 )
                 result["user_message_id"] = user_message_id
                 result["ai_message_id"] = ai_message_id

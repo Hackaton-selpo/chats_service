@@ -9,6 +9,12 @@ from src.database.models import Chat, Message
 from src.shared.enums import MessageRole
 from src.shared.funcs import get_message_type
 
+rndm = {
+    "text": 1,
+    "audio": 2,
+    "image": 3,
+}
+
 
 class ChatsService:
     @staticmethod
@@ -43,6 +49,7 @@ class ChatsService:
     async def insert_message(
             chat_id: int,
             user_prompt: str,
+            message_type: str,
             role: MessageRole = MessageRole.user,
             letter_id: Optional[str] = None,
     ) -> int:
@@ -50,7 +57,10 @@ class ChatsService:
             try:
                 insert_message_req = (
                     insert(Message)
-                    .values(chat_id=chat_id, body=user_prompt, role=role, letter_id=letter_id)
+                    .values(
+                        chat_id=chat_id, body=user_prompt, role=role, letter_id=letter_id,
+                        message_type_id=rndm[message_type],
+                    )
                     .returning(Message.id)
                 )
                 inserted_messaged_id_chunked = await session.execute(insert_message_req)
