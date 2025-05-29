@@ -12,15 +12,17 @@ from src.shared.enums import MessageRole
 class MessageType(Base):
     __tablename__ = "messages_types"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column()
-     messages: Mapped[list["Message"]] = relationship(
-        back_populates="Message", order_by="Message.created_at"
+    messages: Mapped[list["Message"]] = relationship(
+        back_populates="message_type", order_by="Message.created_at"
     )
 
 
 class Message(Base):
     __tablename__ = "messages"
 
+    id: Mapped[int] = mapped_column(primary_key=True)
     message_type_id: Mapped[int] = mapped_column(ForeignKey("messages_types.id"))
     body: Mapped[str] = mapped_column()
     is_liked: Mapped[Optional[bool]] = mapped_column()
@@ -31,9 +33,11 @@ class Message(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    chat: Mapped["Chat"] = relationship(back_populates="messages")
-    message_type: Mapped["MessageType"] = relationship(back_populates="messages_types")
     chat_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("chats.id"))
+
+    # Relationships
+    chat: Mapped["Chat"] = relationship(back_populates="messages")
+    message_type: Mapped["MessageType"] = relationship(back_populates="messages")
     letter_id: Mapped[str] = mapped_column(nullable=True)
 
 
@@ -41,7 +45,7 @@ class Chat(Base):
     __tablename__ = "chats"
 
     id: Mapped[uuid.UUID] = mapped_column(
-        primary_key=True, default=lambda: str(uuid.uuid4())
+        primary_key=True, default=uuid.uuid4
     )
     title: Mapped[str] = mapped_column()
     user_id: Mapped[int] = mapped_column()

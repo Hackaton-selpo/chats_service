@@ -1,10 +1,12 @@
+from typing import Optional
+
 from pydantic import BaseModel, EmailStr
 
 
 class User(BaseModel):
     id: int
     role: str
-    email: EmailStr
+    email: Optional[EmailStr]
 
 
 class AIOutput(BaseModel):

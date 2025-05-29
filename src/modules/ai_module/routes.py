@@ -1,13 +1,15 @@
 import asyncio
+import base64
 import logging
 
 from fastapi import APIRouter
 from starlette.websockets import WebSocket, WebSocketDisconnect
+import base64
 
 from src.grpc_token_checker.token_validator_depends import get_current_user
 from src.modules.ai_module.service import AIService
 from src.modules.chats.services import ChatsService
-from src.shared import schemas as shared_schemas
+from src.shared import schemas as shared_schemas, schemas
 from src.shared.enums import MessageRole
 
 """
@@ -18,6 +20,26 @@ tasks: []
 """
 user_sockets = {}
 router = APIRouter()
+
+
+def decode_token(token: str) -> dict:
+    encoded_string = token
+
+    # Разделяем токен на три части
+    header, payload, signature = encoded_string.split(".")
+
+    # Функция для добавления padding и декодирования
+    def decode_jwt_part(part):
+        # Добавляем недостающие символы заполнения
+        part += '=' * (-len(part) % 4)
+        decoded = base64.urlsafe_b64decode(part).decode('utf-8')
+        return decoded
+
+    # Декодируем header и payload
+    decoded_header = decode_jwt_part(header)
+    decoded_payload = decode_jwt_part(payload)
+    # print(111, decoded_header, decoded_payload)
+    return decoded_payload.split(' ')[-1]
 
 
 @router.websocket("/ws/{token}")
@@ -49,7 +71,11 @@ async def websocket_endpoint(
     :return:
     """
     await websocket.accept()
-    user: shared_schemas.User = get_current_user(token)
+    # user: shared_schemas.User = get_current_user(token)
+    payload_dict = eval(decode_token(token).replace('null', 'None'))
+    payload_dict['id'] = payload_dict['sub']
+    print(payload_dict)
+    user = shared_schemas.User(**payload_dict)
     user_sockets[websocket] = {"tasks": []}
     try:
         while True:
