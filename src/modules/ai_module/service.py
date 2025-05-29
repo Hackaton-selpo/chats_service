@@ -1,6 +1,8 @@
 import asyncio
 from typing import Optional
 
+import httpx
+
 from src.shared import schemas as shared_schemas
 
 
@@ -14,9 +16,9 @@ class AIService:
         return cls.__instance
 
     async def generate_ai_text_answer(
-        self,
-        user_prompt: str,
-        letter_id: Optional[str],
+            self,
+            user_prompt: str,
+            letter_id: Optional[str],
     ) -> shared_schemas.AIOutput:
         """
         :param user_prompt: user text
@@ -39,31 +41,62 @@ class AIService:
         )
 
     async def generate_ai_image_answer(
-        self,
-        user_prompt: str,
-        letter_id: Optional[str],
+            self,
+            user_prompt: str,
+            letter_id: Optional[str],
     ) -> shared_schemas.AIOutput:
         """
 
         :return: bing url to image
         """
-        await asyncio.sleep(10)
-        return shared_schemas.AIOutput(
+        # async with httpx.AsyncClient(timeout=200) as client:
+        #     ai_answer = await client.get(
+        #         f"{self.ai_host}/get_llm_image",
+        #         params={
+        #             "letter_id": letter_id,
+        #             "prompt": user_prompt,
+        #         },
+        #     )
+        #     service_response = ai_answer.json()
+        #     image_url = service_response["url"]
+        #     image_title = service_response["title"]
+        image_url = "https://i.pinimg.com/736x/74/bb/05/74bb05512ccb07a2a2076e0415b2991b.jpg"
+        return shared_schemas.ImageOutput(
             type="image",
-            body="https://i.pinimg.com/736x/74/bb/05/74bb05512ccb07a2a2076e0415b2991b.jpg",
+            body=image_url,
+            title="random title",
         )
 
     async def generate_ai_audio_answer(
-        self,
-        user_prompt: str,
-        letter_id: Optional[str],
-    ) -> shared_schemas.AIOutput:
+            self,
+            user_prompt: str,
+            letter_id: Optional[str],
+            generate_audio_with_text: bool
+    ) -> shared_schemas.AudioOutput:
         """
 
         :return: url to audio
         """
-        await asyncio.sleep(10)
-        return shared_schemas.AIOutput(
+        # async with httpx.AsyncClient(timeout=200) as client:
+        #     ai_answer = await client.get(
+        #         f"{self.ai_host}/get_llm_audio",
+        #         params={
+        #             "letter_id": letter_id,
+        #             "prompt": user_prompt,
+        #             "generate_audio_with_text": generate_audio_with_text
+        #         },
+        #     )
+        #     service_response = ai_answer.json()
+        #     audio_url = service_response["url"]
+        #     audio_bg_url = service_response["bg_image"]
+        #     audio_title = service_response["title"]
+
+        audio_url = "https://zaycev.fractal.zerocdn.com/37a0f8a1ee458ecbdb6ed6bd9df15c1f:2025052620/track/24854430.mp3"
+        audio_bg_url = "https://i.pinimg.com/736x/74/bb/05/74bb05512ccb07a2a2076e0415b2991b.jpg"
+        audio_title = "random title"
+        return shared_schemas.AudioOutput(
             type="audio",
-            body="https://zaycev.fractal.zerocdn.com/37a0f8a1ee458ecbdb6ed6bd9df15c1f:2025052620/track/24854430.mp3",
+            body=audio_url,
+            bg_image=audio_bg_url,
+            title=audio_title,
         )

@@ -10,3 +10,11 @@ class User(BaseModel):
 class AIOutput(BaseModel):
     type: str
     body: str
+
+
+class ImageOutput(AIOutput):
+    title: str
+
+
+class AudioOutput(ImageOutput):
+    bg_image: str

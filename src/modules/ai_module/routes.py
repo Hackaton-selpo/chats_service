@@ -22,8 +22,8 @@ router = APIRouter()
 
 @router.websocket("/ws/{token}")
 async def websocket_endpoint(
-    websocket: WebSocket,
-    token: str,
+        websocket: WebSocket,
+        token: str,
 ):
     """
     при первом запросе проверяет токен,
@@ -79,7 +79,10 @@ async def websocket_endpoint(
             if user_received_json.get("audio"):
                 tasks.append(
                     AIService().generate_ai_audio_answer(
-                        user_received_json["body"], user_received_json.get("letter_id")
+                        user_received_json["body"],
+                        user_received_json.get("letter_id"),
+                        user_received_json.get("audio_text")
+
                     )
                 )
 
@@ -89,8 +92,10 @@ async def websocket_endpoint(
             )
             tasks.clear()
             for done_task in asyncio.as_completed(pending_tasks):
-                result: shared_schemas.AIOutput = await done_task
+                result = await done_task
+                result: shared_schemas.AIOutput | shared_schemas.AudioOutput
                 result = result.model_dump()
+                # add additional info from db
                 result["chat_id"] = chat_id
                 ai_message_id = await ChatsService.insert_message(
                     chat_id, result["body"], role=MessageRole.ai

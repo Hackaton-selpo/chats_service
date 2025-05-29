@@ -9,9 +9,16 @@ from src.database import Base
 from src.shared.enums import MessageRole
 
 
+class MessageType(Base):
+    __tablename__ = "messages_types"
+
+    name: Mapped[str] = mapped_column()
+
+
 class Message(Base):
     __tablename__ = "messages"
 
+    message_type_id: Mapped[int] = mapped_column(ForeignKey("messages_types.id"))
     body: Mapped[str] = mapped_column()
     is_liked: Mapped[Optional[bool]] = mapped_column()
     role: Mapped[MessageRole] = mapped_column(Enum(MessageRole), nullable=False)
@@ -22,6 +29,7 @@ class Message(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     chat: Mapped["Chat"] = relationship(back_populates="messages")
+    message_type: Mapped["MessageType"] = relationship(back_populates="messages")
     chat_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("chats.id"))
 
 
